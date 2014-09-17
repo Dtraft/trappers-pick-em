@@ -24,7 +24,7 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                       </button>
-                      <a class="navbar-brand" href="#">Trapper's Pick em</a>
+                      <a class="navbar-brand" href="/picks/">Trapper's Pick em</a>
                     </div>
 
                     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -36,7 +36,7 @@
                             <li><a href="/picks/users">Users</a></li>
                         <?php elseif($this->data["page"] == "standings"): ?>
                             <li><a href="/picks">Home</a></li>
-                            <li class="active"><a href="#">Standings</a></li>
+                            <li class="active"><a href="/picks/standings">Standings</a></li>
                             <li><a href="/picks/users">Users</a></li>                            
                         <?php else:?>
                             <li><a href="/picks">Home</a></li>

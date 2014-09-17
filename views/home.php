@@ -20,6 +20,7 @@
              <?php endif ?>           
             
             <div class='pull-right'>
+                <a href="/picks/standings/<?php echo $this->data['week']; ?>" style="font-size: 14px;font-weight:normal;">Standings for this week</a>
                 <button type="submit" class="btn btn-primary">Save Pick</button>
             </div>
         </h3>
@@ -69,7 +70,17 @@
                               <td><?php echo $game["home"]["city"] . " " . $game["home"]["name"]?></td>
                               
                               <?php foreach($game["picks"] as $key=>$value):?>
-                                  <td><?php echo $value;?></td>
+                                  <?php
+                                  if(isset($game["winner"])){
+                                      if($game["winner"] === $value){
+                                          echo "<td class='bg-success'>" . $value . "</td>";
+                                      }else{
+                                          echo "<td class='bg-danger'>" . $value . "</td>";
+                                      }
+                                  }else{
+                                      echo "<td>" . $value . "</td>";
+                                  }
+                                  ?>
                               <?php endforeach;?>                             
                               <td>
                                   <div class="form-group">

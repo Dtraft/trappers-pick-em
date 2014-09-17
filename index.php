@@ -135,9 +135,83 @@ $app->post('/save/:week/winners', function($week) use ($app, $remote){
     $app->redirect("/picks/week/" . $week . "/winners");    
 });
 
-$app->get('/standings', function () use ($app) {
+$app->get('/standings', function () use ($app, $remote) {
+    //configure database connection
+    $m = new Mongo($remote);
+    $db = $m->picks;
+    
+    //get all games this week
+    //$week = intval($week);
+    $games = $db->games;
+    $cursor = $games->find();
+    $cursor->sort(array("dateTime" => 1));
+    // iterate through the results
+    $allGames = array();
+    $count = 0;
+    $users = array();
+    while ($cursor->hasNext()) {
+        $game = $cursor->getNext();
+        //print_r($game);
+        if(isset($game["picks"]) && count($game["picks"]) > 0){
+            foreach($game["picks"] as $key=>$value){
+                if(!isset($users[$key])){
+                    $users[$key] = 0;
+                }
+            
+                if($game["winner"] == $value){
+                    $users[$key] += 1;
+                }
+            }
+            $count += 1;
+        }        
+    }  
+    //sort winner to top
+    arsort($users);
     $app->render('standings.php', array(
-        "page" => "standings"
+        "page" => "standings",
+        "users" => $users,
+        "count" => $count,
+        "week" => "Whole Season"
+    ));
+});
+
+$app->get('/standings/:week', function ($week) use ($app, $remote) {
+    //configure database connection
+    $m = new Mongo($remote);
+    $db = $m->picks;
+    
+    //get all games this week
+    $week = intval($week);
+    $games = $db->games;
+    $cursor = $games->find(array( "week" => $week));
+    $cursor->sort(array("dateTime" => 1));
+    // iterate through the results
+    $allGames = array();
+    $count = 0;
+    $users = array();
+    while ($cursor->hasNext()) {
+        $game = $cursor->getNext();
+        //print_r($game);
+        if(isset($game["picks"]) && count($game["picks"]) > 0){
+            foreach($game["picks"] as $key=>$value){
+                if(!isset($users[$key])){
+                    $users[$key] = 0;
+                }
+            
+                if($game["winner"] == $value){
+                    $users[$key] += 1;
+                }
+            }
+            $count += 1;
+        }        
+    }  
+    //sort winner to top
+    arsort($users);
+    $app->render('standings.php', array(
+        "page" => "standings",
+        "users" => $users,
+        "count" => $count,
+        "week" => "Week " . $week
     ));
 });
 
