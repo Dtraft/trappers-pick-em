@@ -40,6 +40,7 @@
                       <?php foreach($this->data["games"][0]["picks"] as $key=>$value):?>
                           <th><?php echo $key;?></th>
                       <?php endforeach;?>
+                      <?php if(!isset($this->data["games"][0]["winner"])):?>
                       <td>                          
                         <div class="form-group">
                           <select id="select" class="form-control" style="width: 125px;" name="user">
@@ -49,7 +50,8 @@
                               <?php endforeach?>
                           </select>
                         </div>
-                      </td>            
+                      </td>   
+                      <?php endif ?>         
                   </tr>
                   
                       <?php for($g = 0; $g < count($this->data["games"]); $g++): ?>
@@ -81,7 +83,8 @@
                                       echo "<td>" . $value . "</td>";
                                   }
                                   ?>
-                              <?php endforeach;?>                             
+                              <?php endforeach;?>      
+                              <?php if(!isset($this->data["games"][0]["winner"])):?>                      
                               <td>
                                   <div class="form-group">
                                       <select type="text" class="form-control" style="width: 125px;" name="<?php echo $game["_id"]->{'$id'}; ?>">
@@ -91,6 +94,7 @@
                                       </select>
                                   </div>
                               </td>
+                              <?php endif?>
                           </tr>
                       <?php endfor; ?>
                       
