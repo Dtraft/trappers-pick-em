@@ -58,6 +58,32 @@ $app->get('/week/:week', function ($week) use ($app, $remote) {
     ));
 });
 
+$app->get('/week/:week/winners', function ($week) use ($app, $remote) {
+    //configure database connection
+    $m = new Mongo($remote);
+    $db = $m->picks;
+    
+    //get all games this week
+    $week = intval($week);
+    $games = $db->games;
+    $cursor = $games->find(array( "week" => $week));
+    $cursor->sort(array("dateTime" => 1));
+    // iterate through the results
+    $gamesThisWeek = array();
+    while ($cursor->hasNext()) {
+        $game = $cursor->getNext();
+        //print_r($game);
+        array_push($gamesThisWeek, $game);
+    }
+    
+    $app->render('assign.php', array(
+        "page" => "home",
+        "week" => $week,
+        "games" => $gamesThisWeek
+    ));
+});
+
+
 $app->post('/save/:week', function($week) use ($app, $remote){
     //configure database connection
     $dbhost = 'localhost';
@@ -80,11 +106,33 @@ $app->post('/save/:week', function($week) use ($app, $remote){
                 "picks." . $user => $value
             )
         ));
-    }
-    
-    
+    }  
     //print_r($picks);
     $app->redirect("/picks/week/" . $week);    
+});
+
+$app->post('/save/:week/winners', function($week) use ($app, $remote){
+    //configure database connection
+    $dbhost = 'localhost';
+    $dbname = 'picks';
+    $m = new Mongo($remote);
+    $db = $m->picks;
+    $games = $db->games;
+    
+    //data from form
+    $picks = $app->request->post();
+    
+    foreach($picks as $key=>$value){
+        $games->update(array(
+            "_id" => new MongoId($key)
+        ), array(
+            '$set' => array(
+                "winner" => $value
+            )
+        ));
+    }  
+    //print_r($picks);
+    $app->redirect("/picks/week/" . $week . "/winners");    
 });
 
 $app->get('/standings', function () use ($app) {
