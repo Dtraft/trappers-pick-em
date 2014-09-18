@@ -152,7 +152,7 @@ $app->get('/standings', function () use ($app, $remote) {
     while ($cursor->hasNext()) {
         $game = $cursor->getNext();
         //print_r($game);
-        if(isset($game["picks"]) && count($game["picks"] && isset($game["winner"])) > 0){
+        if(isset($game["picks"]) && count($game["picks"]) > 0 && isset($game["winner"])){
             foreach($game["picks"] as $key=>$value){
                 if(!isset($users[$key])){
                     $users[$key] = 0;
